@@ -13,7 +13,6 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 
@@ -95,8 +94,7 @@ signing {
 }
 
 dependencies {
-    compile 'com.blackducksoftware.integration:integration-common:5.6.0'
-    compile 'com.blackducksoftware.integration:integration-bdio:2.0.0'
+    compile 'com.blackducksoftware.integration:integration-bdio:2.0.1'
 
     compile gradleApi()
 }

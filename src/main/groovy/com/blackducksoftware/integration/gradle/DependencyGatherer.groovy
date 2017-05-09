@@ -4,6 +4,7 @@ import java.lang.reflect.Method
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ResolvedConfiguration
 import org.gradle.api.artifacts.ResolvedDependency
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -33,9 +34,10 @@ class DependencyGatherer {
         rootProject.allprojects.each { project ->
             if (projectFilter.shouldInclude(project.name)) {
                 project.configurations.each { configuration ->
-                    if (shouldIncludeConfiguration(configuration, configurationFilter)) {
-                        configuration.resolvedConfiguration.firstLevelModuleDependencies.each { dependency ->
-                            addDependencyNodeToParent(configuration.name, rootProjectNode, dependency)
+                    ResolvedConfiguration resolvedConfiguration = resolveConfiguration(configuration, configurationFilter)
+                    if (resolvedConfiguration != null) {
+                        resolvedConfiguration.firstLevelModuleDependencies.each { dependency ->
+                            addDependencyNodeToParent(rootProjectNode, dependency)
                         }
                     }
                 }
@@ -45,24 +47,33 @@ class DependencyGatherer {
         return rootProjectNode;
     }
 
-    private boolean shouldIncludeConfiguration(Configuration configuration, ExcludedIncludedFilter configurationFilter) {
+    private ResolvedConfiguration resolveConfiguration(Configuration configuration, ExcludedIncludedFilter configurationFilter) {
         if (!configurationFilter.shouldInclude(configuration.name)) {
-            return false
+            return null
         }
         try {
             Method isCanBeResolved = Configuration.class.getMethod("isCanBeResolved")
             boolean result = isCanBeResolved.invoke(configuration)
-            if (!result) {
-                return false
+            if (result) {
+                return configuration.resolvedConfiguration
+            } else {
+                return null
             }
         } catch (Exception e) {
             //Exceptions are likely here since we are trying to invoke a method that may not exist (isCanBeResolved was added in 3.3)
             logger.debug("Trying to invoke isCanBeResolved threw an Exception (likely not an issue): ${e.message}")
         }
-        return true
+
+        try {
+            return configuration.resolvedConfiguration
+        } catch (Exception e) {
+            //Exceptions are unlikely here since there should not be any configurations that can not be resolved without the isCanBeResolved method
+            logger.error("Tried to resolve a configuration that can't be resolved and the isCanBeResolved method doesn't appear to exist: ${e.message}")
+        }
+        return null
     }
 
-    private void addDependencyNodeToParent(String configurationName, DependencyNode parentDependencyNode, final ResolvedDependency resolvedDependency) {
+    private void addDependencyNodeToParent(DependencyNode parentDependencyNode, final ResolvedDependency resolvedDependency) {
         def group = resolvedDependency.moduleGroup
         def name = resolvedDependency.moduleName
         def version = resolvedDependency.moduleVersion
@@ -72,12 +83,7 @@ class DependencyGatherer {
         dependencyNodeBuilder.addChildNodeWithParents(dependencyNode, [parentDependencyNode])
         if (alreadyAddedIds.add(mavenExternalId.createDataId())) {
             for (ResolvedDependency child : resolvedDependency.getChildren()) {
-                /**
-                 * A ResolvedDependency will include ALL children from ALL Configurations, regardless of the Configuration it came from
-                 */
-                if (configurationName == child.configuration) {
-                    addDependencyNodeToParent(configurationName, dependencyNode, child)
-                }
+                addDependencyNodeToParent(dependencyNode, child)
             }
         }
     }
