@@ -21,9 +21,14 @@ class DependencyGatherer {
     private DependencyNodeBuilder dependencyNodeBuilder
 
     DependencyNode getFullyPopulatedRootNode(final Project rootProject, String excludedProjectNames, String includedProjectNames, String excludedConfigurationNames, String includedConfigurationNames) {
-        def group = rootProject.group
+        /**
+         * getName() returns a String, while getGroup() and getVersion() both return Object. Gradle's javadoc indicates that using the toString() is appropriate
+         * https://docs.gradle.org/3.5/javadoc/org/gradle/api/Project.html#getGroup()
+         * https://docs.gradle.org/3.5/javadoc/org/gradle/api/Project.html#getVersion()
+         */
+        def group = rootProject.group.toString()
         def name = rootProject.name
-        def version = rootProject.version
+        def version = rootProject.version.toString()
         DependencyNode rootProjectNode = new DependencyNode(name, version, new MavenExternalId(group, name, version))
 
         ExcludedIncludedFilter projectFilter = new ExcludedIncludedFilter(excludedProjectNames, includedProjectNames)
