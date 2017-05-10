@@ -7,7 +7,7 @@ tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
 tasks.withType(GroovyCompile) { options.encoding = 'UTF-8' }
 
 group = 'com.blackducksoftware.integration'
-version = '0.0.4-SNAPSHOT'
+version = '0.0.4'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -94,7 +94,7 @@ signing {
 }
 
 dependencies {
-    compile 'com.blackducksoftware.integration:integration-bdio:2.0.1'
+    compile 'com.blackducksoftware.integration:integration-bdio:2.0.2'
 
     compile gradleApi()
 }
