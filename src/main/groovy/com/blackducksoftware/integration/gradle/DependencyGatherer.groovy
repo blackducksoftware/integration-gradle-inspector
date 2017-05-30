@@ -27,7 +27,7 @@ class DependencyGatherer {
          * https://docs.gradle.org/3.5/javadoc/org/gradle/api/Project.html#getVersion()
          */
         def group = rootProject.group.toString()
-        def name = rootProject.name
+        def name = rootProject.name.toString()
         def version = rootProject.version.toString()
         DependencyNode rootProjectNode = new DependencyNode(name, version, new MavenExternalId(group, name, version))
 
