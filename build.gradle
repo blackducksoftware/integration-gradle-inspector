@@ -94,7 +94,7 @@ signing {
 }
 
 dependencies {
-    compile 'com.blackducksoftware.integration:integration-bdio:4.0.0'
+    compile 'com.blackducksoftware.integration:integration-bdio:4.0.1'
 
     compile gradleApi()
 }
