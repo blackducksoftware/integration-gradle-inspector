@@ -57,13 +57,11 @@ class DependencyGatherer {
         ExcludedIncludedFilter configurationFilter = new ExcludedIncludedFilter(excludedConfigurationNames, includedConfigurationNames)
         alreadyAddedIds = new HashSet<>()
 
-
         rootProject.allprojects.each { project ->
             if (projectFilter.shouldInclude(project.name)) {
                 def group = project.group.toString()
                 def name = project.name.toString()
                 def version = project.version.toString()
-                System.out.println("Gradle project : ${group}_${name}_${version}")
 
                 DependencyNode projectNode = new DependencyNode(name, version, new MavenExternalId(group, name, version))
                 project.configurations.each { configuration ->
