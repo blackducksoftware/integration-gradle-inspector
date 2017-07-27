@@ -19,14 +19,6 @@ repositories {
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: "file:/Users/jrichard/.m2/repository")
-        }
-    }
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
             beforeDeployment { MavenDeployment deployment ->
                 signing.signPom(deployment)
             }
