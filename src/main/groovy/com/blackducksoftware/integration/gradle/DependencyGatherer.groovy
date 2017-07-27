@@ -21,37 +21,6 @@ class DependencyGatherer {
 
     private Set<String> alreadyAddedIds
 
-    DependencyNode getFullyPopulatedRootNode(final Project rootProject, String excludedProjectNames, String includedProjectNames, String excludedConfigurationNames, String includedConfigurationNames) {
-        /**
-         * getName() returns a String, while getGroup() and getVersion() both return Object. Gradle's javadoc indicates that using the toString() is appropriate
-         * https://docs.gradle.org/3.5/javadoc/org/gradle/api/Project.html#getGroup()
-         * https://docs.gradle.org/3.5/javadoc/org/gradle/api/Project.html#getVersion()
-         */
-        def group = rootProject.group.toString()
-        def name = rootProject.name.toString()
-        def version = rootProject.version.toString()
-        DependencyNode rootProjectNode = new DependencyNode(name, version, new MavenExternalId(group, name, version))
-
-        ExcludedIncludedFilter projectFilter = new ExcludedIncludedFilter(excludedProjectNames, includedProjectNames)
-        ExcludedIncludedFilter configurationFilter = new ExcludedIncludedFilter(excludedConfigurationNames, includedConfigurationNames)
-        alreadyAddedIds = new HashSet<>()
-
-        rootProject.allprojects.each { project ->
-            if (projectFilter.shouldInclude(project.name)) {
-                project.configurations.each { configuration ->
-                    ResolvedConfiguration resolvedConfiguration = resolveConfiguration(configuration, configurationFilter)
-                    if (resolvedConfiguration != null) {
-                        resolvedConfiguration.firstLevelModuleDependencies.each { dependency ->
-                            addDependencyNodeToParent(rootProjectNode, dependency)
-                        }
-                    }
-                }
-            }
-        }
-
-        return rootProjectNode;
-    }
-
     void createAllProjectDependencyFiles(final Project rootProject, String excludedProjectNames, String includedProjectNames, String excludedConfigurationNames, String includedConfigurationNames, File outputDirectory) {
         ExcludedIncludedFilter projectFilter = new ExcludedIncludedFilter(excludedProjectNames, includedProjectNames)
         ExcludedIncludedFilter configurationFilter = new ExcludedIncludedFilter(excludedConfigurationNames, includedConfigurationNames)
