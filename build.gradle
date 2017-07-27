@@ -19,46 +19,54 @@ repositories {
 uploadArchives {
     repositories {
         mavenDeployer {
-            beforeDeployment { MavenDeployment deployment ->
-                signing.signPom(deployment)
-            }
-            repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
-                authentication(userName: sonatypeUsername, password: sonatypePassword)
-            }
-            snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
-                authentication(userName: sonatypeUsername, password: sonatypePassword)
-            }
-            pom.project {
-                name rootProject.name
-                description rootProject.description
-                url 'https://www.github.com/blackducksoftware/integration-gradle-inspector'
-                packaging 'jar'
-                scm {
-                    connection 'scm:git:git://github.com/blackducksoftware/integration-gradle-inspector.git'
-                    developerConnection 'scm:git:git@github.com:blackducksoftware/integration-gradle-inspector.git'
-                    url 'https://www.github.com/blackducksoftware/integration-gradle-inspector'
-                }
-                licenses {
-                    license {
-                        name 'Apache License 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0'
-                    }
-                }
-                developers {
-                    developer {
-                        id 'blackduckoss'
-                        name 'Black Duck OSS'
-                        email 'bdsoss@blackducksoftware.com'
-                        organization 'Black Duck Software, Inc.'
-                        organizationUrl 'http://www.blackducksoftware.com'
-                        roles { role 'developer' }
-                        timezone 'America/New_York'
-                    }
-                }
-            }
+            repository(url: "file:/Users/jrichard/.m2/repository")
         }
     }
 }
+
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            beforeDeployment { MavenDeployment deployment ->
+//                signing.signPom(deployment)
+//            }
+//            repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+//                authentication(userName: sonatypeUsername, password: sonatypePassword)
+//            }
+//            snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
+//                authentication(userName: sonatypeUsername, password: sonatypePassword)
+//            }
+//            pom.project {
+//                name rootProject.name
+//                description rootProject.description
+//                url 'https://www.github.com/blackducksoftware/integration-gradle-inspector'
+//                packaging 'jar'
+//                scm {
+//                    connection 'scm:git:git://github.com/blackducksoftware/integration-gradle-inspector.git'
+//                    developerConnection 'scm:git:git@github.com:blackducksoftware/integration-gradle-inspector.git'
+//                    url 'https://www.github.com/blackducksoftware/integration-gradle-inspector'
+//                }
+//                licenses {
+//                    license {
+//                        name 'Apache License 2.0'
+//                        url 'http://www.apache.org/licenses/LICENSE-2.0'
+//                    }
+//                }
+//                developers {
+//                    developer {
+//                        id 'blackduckoss'
+//                        name 'Black Duck OSS'
+//                        email 'bdsoss@blackducksoftware.com'
+//                        organization 'Black Duck Software, Inc.'
+//                        organizationUrl 'http://www.blackducksoftware.com'
+//                        roles { role 'developer' }
+//                        timezone 'America/New_York'
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
 gradle.taskGraph.whenReady {
     if (gradle.taskGraph.hasTask(":uploadArchives")) {
@@ -94,7 +102,7 @@ signing {
 }
 
 dependencies {
-    compile 'com.blackducksoftware.integration:integration-bdio:4.0.1'
-
+    compile 'com.blackducksoftware.integration:integration-bdio:4.1.1'
+    compile 'com.google.code.gson:gson:2.7'
     compile gradleApi()
 }

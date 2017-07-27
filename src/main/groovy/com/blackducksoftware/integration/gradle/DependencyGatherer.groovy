@@ -12,6 +12,9 @@ import org.slf4j.LoggerFactory
 import com.blackducksoftware.integration.hub.bdio.simple.model.DependencyNode
 import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId
 import com.blackducksoftware.integration.util.ExcludedIncludedFilter
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.stream.JsonWriter
 
 class DependencyGatherer {
     private final Logger logger = LoggerFactory.getLogger(DependencyGatherer.class)
@@ -47,6 +50,40 @@ class DependencyGatherer {
         }
 
         return rootProjectNode;
+    }
+
+    void createAllProjectDependencyFiles(final Project rootProject, String excludedProjectNames, String includedProjectNames, String excludedConfigurationNames, String includedConfigurationNames, File outputDirectory) {
+        ExcludedIncludedFilter projectFilter = new ExcludedIncludedFilter(excludedProjectNames, includedProjectNames)
+        ExcludedIncludedFilter configurationFilter = new ExcludedIncludedFilter(excludedConfigurationNames, includedConfigurationNames)
+        alreadyAddedIds = new HashSet<>()
+
+
+        rootProject.allprojects.each { project ->
+            if (projectFilter.shouldInclude(project.name)) {
+                def group = project.group.toString()
+                def name = project.name.toString()
+                def version = project.version.toString()
+                System.out.println("Gradle project : ${group}_${name}_${version}")
+
+                DependencyNode projectNode = new DependencyNode(name, version, new MavenExternalId(group, name, version))
+                project.configurations.each { configuration ->
+                    ResolvedConfiguration resolvedConfiguration = resolveConfiguration(configuration, configurationFilter)
+                    if (resolvedConfiguration != null) {
+                        resolvedConfiguration.firstLevelModuleDependencies.each { dependency ->
+                            addDependencyNodeToParent(projectNode, dependency)
+                        }
+                    }
+                }
+                File outputFile = new File(outputDirectory, "${group}_${name}_dependencyNodes.json")
+                if (outputFile.exists()) {
+                    outputFile.delete()
+                }
+                Gson gson = new GsonBuilder().setPrettyPrinting().create()
+                JsonWriter jsonWriter = gson.newJsonWriter(new BufferedWriter(new FileWriter(outputFile)))
+                gson.toJson(projectNode, DependencyNode.class, jsonWriter)
+                jsonWriter.close()
+            }
+        }
     }
 
     private ResolvedConfiguration resolveConfiguration(Configuration configuration, ExcludedIncludedFilter configurationFilter) {
