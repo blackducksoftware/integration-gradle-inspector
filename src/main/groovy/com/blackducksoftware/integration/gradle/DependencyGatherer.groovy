@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory
 
 import com.blackducksoftware.integration.hub.bdio.simple.model.DependencyNode
 import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId
+import com.blackducksoftware.integration.hub.detect.model.BomToolType
+import com.blackducksoftware.integration.hub.detect.model.DetectCodeLocation
 import com.blackducksoftware.integration.util.ExcludedIncludedFilter
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -79,6 +81,52 @@ class DependencyGatherer {
                 Gson gson = new GsonBuilder().setPrettyPrinting().create()
                 JsonWriter jsonWriter = gson.newJsonWriter(new BufferedWriter(new FileWriter(outputFile)))
                 gson.toJson(projectNode, DependencyNode.class, jsonWriter)
+                jsonWriter.close()
+            }
+        }
+    }
+
+    void createAllCodeLocationFiles(final Project rootProject, String excludedProjectNames, String includedProjectNames, String excludedConfigurationNames, String includedConfigurationNames, File outputDirectory) {
+        ExcludedIncludedFilter projectFilter = new ExcludedIncludedFilter(excludedProjectNames, includedProjectNames)
+        ExcludedIncludedFilter configurationFilter = new ExcludedIncludedFilter(excludedConfigurationNames, includedConfigurationNames)
+        alreadyAddedIds = new HashSet<>()
+
+        String projectGroup = ''
+        String projectName = ''
+        String projectVersionName = ''
+        rootProject.allprojects.each { project ->
+            if (projectFilter.shouldInclude(project.name)) {
+                def group = project.group.toString()
+                def name = project.name.toString()
+                def version = project.version.toString()
+                if (!projectGroup) {
+                    projectGroup = group
+                }
+                if (!projectName) {
+                    projectName = name
+                }
+                if (!projectVersionName) {
+                    projectVersionName = version
+                }
+                DependencyNode projectNode = new DependencyNode(name, version, new MavenExternalId(group, name, version))
+                project.configurations.each { configuration ->
+                    ResolvedConfiguration resolvedConfiguration = resolveConfiguration(configuration, configurationFilter)
+                    if (resolvedConfiguration != null) {
+                        resolvedConfiguration.firstLevelModuleDependencies.each { dependency ->
+                            addDependencyNodeToParent(projectNode, dependency)
+                        }
+                    }
+                }
+                File outputFile = new File(outputDirectory, "${group}_${name}_detectCodeLocation.json")
+                if (outputFile.exists()) {
+                    outputFile.delete()
+                }
+                DetectCodeLocation codeLocation = new DetectCodeLocation(BomToolType.GRADLE, project.getProjectDir().getAbsolutePath(), projectName, projectVersionName, null,
+                        new MavenExternalId(projectGroup, projectName, projectVersionName),projectNode.children)
+
+                Gson gson = new GsonBuilder().setPrettyPrinting().create()
+                JsonWriter jsonWriter = gson.newJsonWriter(new BufferedWriter(new FileWriter(outputFile)))
+                gson.toJson(codeLocation, DetectCodeLocation.class, jsonWriter)
                 jsonWriter.close()
             }
         }
