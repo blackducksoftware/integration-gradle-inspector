@@ -121,7 +121,7 @@ class DependencyGatherer {
                 if (outputFile.exists()) {
                     outputFile.delete()
                 }
-                DetectCodeLocation codeLocation = new DetectCodeLocation(BomToolType.GRADLE, project.getProjectDir().getAbsolutePath(), projectName, projectVersionName, null,
+                DetectCodeLocation codeLocation = new DetectCodeLocation(BomToolType.GRADLE, project.getProjectDir().getAbsolutePath(), projectName, projectVersionName,
                         new MavenExternalId(projectGroup, projectName, projectVersionName),projectNode.children)
 
                 Gson gson = new GsonBuilder().setPrettyPrinting().create()
