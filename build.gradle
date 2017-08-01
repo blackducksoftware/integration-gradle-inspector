@@ -95,7 +95,7 @@ signing {
 }
 
 dependencies {
-    compile ('com.blackducksoftware.integration:hub-detect-model:0.0.2-SNAPSHOT') {
+    compile ('com.blackducksoftware.integration:hub-detect-model:0.0.2') {
             exclude group: 'org.codehaus.groovy', module: 'groovy-all'
     }
     compile 'com.blackducksoftware.integration:integration-bdio:4.1.1'
