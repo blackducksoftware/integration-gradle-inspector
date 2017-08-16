@@ -38,6 +38,7 @@ class DependencyGatherer {
 
         rootProject.allprojects.each { project ->
             if (projectFilter.shouldInclude(project.name)) {
+                println project.projectDir
                 project.configurations.each { configuration ->
                     ResolvedConfiguration resolvedConfiguration = resolveConfiguration(configuration, configurationFilter)
                     if (resolvedConfiguration != null) {
