@@ -7,7 +7,7 @@ tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
 tasks.withType(GroovyCompile) { options.encoding = 'UTF-8' }
 
 group = 'com.blackducksoftware.integration'
-version = '0.2.2-SNAPSHOT'
+version = '0.2.2'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -98,7 +98,7 @@ dependencies {
     compile ('com.blackducksoftware.integration:hub-detect-model:0.0.2') {
             exclude group: 'org.codehaus.groovy', module: 'groovy-all'
     }
-    compile 'com.blackducksoftware.integration:integration-bdio:4.1.1'
+    compile 'com.blackducksoftware.integration:integration-bdio:4.2.1'
     compile 'com.google.code.gson:gson:2.7'
     compile gradleApi()
 }
