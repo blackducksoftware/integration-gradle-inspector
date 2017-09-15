@@ -44,7 +44,6 @@ class DependencyGatherer {
             logger.info("Processing ${rootProject.allprojects.size()} projects")
 
             int processors = Runtime.getRuntime().availableProcessors();
-            logger.info("Processors ${processors}")
             ExecutorService executor = Executors.newFixedThreadPool(processors);
 
 
