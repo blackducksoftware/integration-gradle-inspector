@@ -27,6 +27,7 @@ import com.blackducksoftware.integration.hub.detect.model.BomToolType
 import com.blackducksoftware.integration.hub.detect.model.DetectCodeLocation
 import com.blackducksoftware.integration.util.ExcludedIncludedFilter
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.stream.JsonWriter
 
 class ProjectProcessor implements Runnable {
@@ -41,14 +42,16 @@ class ProjectProcessor implements Runnable {
     private final  String projectName
     private final  String projectVersionName
 
-    private final Gson gson
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create()
 
-    public ProjectProcessor(CountDownLatch latch, Project project, ExcludedIncludedFilter configurationFilter, File outputDirectory, String projectGroup, String projectName, String projectVersionName, Gson gson) {
+    public ProjectProcessor(CountDownLatch latch, Project project, ExcludedIncludedFilter configurationFilter, File outputDirectory, String projectGroup, String projectName, String projectVersionName) {
         this.latch = latch
         this.project = project
         this.configurationFilter=configurationFilter
         this.outputDirectory = outputDirectory
-        this.gson=gson
+        this.projectGroup = projectGroup
+        this.projectName = projectName
+        this.projectVersionName = projectVersionName
     }
 
 

@@ -37,9 +37,12 @@ class DependencyGatherer {
             ExcludedIncludedFilter projectFilter = new ExcludedIncludedFilter(excludedProjectNames, includedProjectNames)
             ExcludedIncludedFilter configurationFilter = new ExcludedIncludedFilter(excludedConfigurationNames, includedConfigurationNames)
 
-            String projectGroup = rootProject.group.toString()
-            String projectName = rootProject.name.toString()
-            String projectVersionName = rootProject.version.toString()
+            final String projectGroup = rootProject.group.toString()
+            final String projectName = rootProject.name.toString()
+            final String projectVersionName = rootProject.version.toString()
+            println "Root Project ${projectGroup}:${projectName}:${projectVersionName}"
+
+
             CountDownLatch latch = new CountDownLatch(rootProject.allprojects.size())
             logger.info("Processing ${rootProject.allprojects.size()} projects")
 
@@ -49,7 +52,7 @@ class DependencyGatherer {
 
             rootProject.allprojects.each { project ->
                 if (projectFilter.shouldInclude(project.name)) {
-                    ProjectProcessor projectProcessor = new ProjectProcessor(latch, project, configurationFilter, outputDirectory,  projectGroup,  projectName,  projectVersionName,  gson)
+                    ProjectProcessor projectProcessor = new ProjectProcessor(latch, project, configurationFilter, outputDirectory,  projectGroup,  projectName,  projectVersionName)
                     executor.submit(projectProcessor);
                 }
             }
