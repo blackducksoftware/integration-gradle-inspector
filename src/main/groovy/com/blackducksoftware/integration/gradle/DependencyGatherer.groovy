@@ -4,6 +4,7 @@ import java.lang.reflect.Method
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -33,6 +34,7 @@ class DependencyGatherer {
     }
 
     void multiThreadedProjects(final Project rootProject, String excludedProjectNames, String includedProjectNames, String excludedConfigurationNames, String includedConfigurationNames, File outputDirectory) {
+        // FIXME, The projects reference each other and cause a dead lock scenario when multi-threading the project processing
         try {
             ExcludedIncludedFilter projectFilter = new ExcludedIncludedFilter(excludedProjectNames, includedProjectNames)
             ExcludedIncludedFilter configurationFilter = new ExcludedIncludedFilter(excludedConfigurationNames, includedConfigurationNames)
@@ -40,27 +42,20 @@ class DependencyGatherer {
             final String projectGroup = rootProject.group.toString()
             final String projectName = rootProject.name.toString()
             final String projectVersionName = rootProject.version.toString()
-            println "Root Project ${projectGroup}:${projectName}:${projectVersionName}"
 
-
-            CountDownLatch latch = new CountDownLatch(rootProject.allprojects.size())
             logger.info("Processing ${rootProject.allprojects.size()} projects")
 
             int processors = Runtime.getRuntime().availableProcessors();
-            ExecutorService executor = Executors.newFixedThreadPool(processors);
-
+            ExecutorService executor = Executors.newFixedThreadPool(processors, Executors.defaultThreadFactory());
 
             rootProject.allprojects.each { project ->
                 if (projectFilter.shouldInclude(project.name)) {
-                    ProjectProcessor projectProcessor = new ProjectProcessor(latch, project, configurationFilter, outputDirectory,  projectGroup,  projectName,  projectVersionName)
-                    executor.submit(projectProcessor);
+                    ProjectProcessor projectProcessor = new ProjectProcessor(project, configurationFilter, outputDirectory,  projectGroup,  projectName,  projectVersionName)
+                    executor.submit(projectProcessor)
                 }
             }
-            try {
-                latch.await();
-            } catch (InterruptedException e) {
-                logger.error(e.getMessage(), e)
-            }
+            executor.awaitTermination(120l, TimeUnit.SECONDS)
+
 
             logger.info("Finished processing the all Projects")
         } catch (Exception e) {

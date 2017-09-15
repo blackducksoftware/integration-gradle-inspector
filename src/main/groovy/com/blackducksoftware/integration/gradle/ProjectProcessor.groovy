@@ -12,7 +12,6 @@
 package com.blackducksoftware.integration.gradle
 
 import java.lang.reflect.Method
-import java.util.concurrent.CountDownLatch
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -30,9 +29,11 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.stream.JsonWriter
 
-class ProjectProcessor implements Runnable {
+import groovy.transform.TypeChecked
+
+@TypeChecked
+class ProjectProcessor extends Thread {
     private final Logger logger = LoggerFactory.getLogger(ProjectProcessor.class)
-    private final CountDownLatch latch
     private final Project project
 
     private final ExcludedIncludedFilter configurationFilter
@@ -44,8 +45,8 @@ class ProjectProcessor implements Runnable {
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create()
 
-    public ProjectProcessor(CountDownLatch latch, Project project, ExcludedIncludedFilter configurationFilter, File outputDirectory, String projectGroup, String projectName, String projectVersionName) {
-        this.latch = latch
+    public ProjectProcessor(Project project, ExcludedIncludedFilter configurationFilter, File outputDirectory, String projectGroup, String projectName, String projectVersionName) {
+        super("Projectprocessor")
         this.project = project
         this.configurationFilter=configurationFilter
         this.outputDirectory = outputDirectory
@@ -95,8 +96,6 @@ class ProjectProcessor implements Runnable {
         } catch (Exception e) {
             logger.error(e.getMessage(), e)
             throw e;
-        } finally {
-            latch.countDown()
         }
     }
 
@@ -133,7 +132,7 @@ class ProjectProcessor implements Runnable {
 
         def mavenExternalId = new MavenExternalId(group, name, version)
         def dependencyNode = new DependencyNode(name, version, mavenExternalId)
-
+        logger.info("${mavenExternalId}")
         parentDependencyNode.children.add(dependencyNode)
 
 
