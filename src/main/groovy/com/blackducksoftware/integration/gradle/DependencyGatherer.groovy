@@ -21,28 +21,22 @@ class DependencyGatherer {
         ExcludedIncludedFilter projectFilter = new ExcludedIncludedFilter(excludedProjectNames, includedProjectNames)
         ExcludedIncludedFilter configurationFilter = new ExcludedIncludedFilter(excludedConfigurationNames, includedConfigurationNames)
 
-        String projectGroup = ''
-        String projectName = ''
-        String projectVersionName = ''
+        String rootProjectGroup = rootProject.group.toString()
+        String rootProjectName = rootProject.name.toString()
+        String rootProjectVersionName = rootProject.version.toString()
+
         rootProject.allprojects.each { project ->
             if (projectFilter.shouldInclude(project.name)) {
-                def group = project.group.toString()
-                def name = project.name.toString()
-                def version = project.version.toString()
-                if (!projectGroup) {
-                    projectGroup = group
-                }
-                if (!projectName) {
-                    projectName = name
-                }
-                if (!projectVersionName) {
-                    projectVersionName = version
-                }
+                String group = project.group.toString()
+                String name = project.name.toString()
+                String version = project.version.toString()
 
                 File outputFile = new File(outputDirectory, "${group}_${name}_dependencyGraph.txt")
                 if (outputFile.exists()) {
                     outputFile.delete()
                 }
+                outputFile.createNewFile()
+
                 println "starting ${outputFile.canonicalPath}"
                 AsciiDependencyReportRenderer renderer = new AsciiDependencyReportRenderer()
                 renderer.setOutputFile(outputFile)
@@ -63,6 +57,7 @@ class DependencyGatherer {
                 }
                 renderer.completeProject(project)
                 renderer.complete()
+
                 println "completed ${outputFile.canonicalPath}"
             }
         }
