@@ -8,13 +8,16 @@ import org.slf4j.LoggerFactory
 
 import com.blackducksoftware.integration.util.ExcludedIncludedFilter
 
+import groovy.transform.TypeChecked
+
+@TypeChecked
 class DependencyGatherer {
     private final Logger logger = LoggerFactory.getLogger(DependencyGatherer.class)
 
     def alreadyAddedIds = new HashSet<>()
     def componentCounts = new HashMap<String, Integer>()
 
-    void createAllCodeLocationFiles(final Project rootProject, String excludedProjectNames, String includedProjectNames, String excludedConfigurationNames, String includedConfigurationNames, File outputDirectory) {
+    void createAllDependencyGraphFiles(final Project rootProject, String excludedProjectNames, String includedProjectNames, String excludedConfigurationNames, String includedConfigurationNames, File outputDirectory) {
         ExcludedIncludedFilter projectFilter = new ExcludedIncludedFilter(excludedProjectNames, includedProjectNames)
         ExcludedIncludedFilter configurationFilter = new ExcludedIncludedFilter(excludedConfigurationNames, includedConfigurationNames)
 
@@ -36,7 +39,7 @@ class DependencyGatherer {
                     projectVersionName = version
                 }
 
-                File outputFile = new File(outputDirectory, "${group}_${name}_detectCodeLocation.txt")
+                File outputFile = new File(outputDirectory, "${group}_${name}_dependencyGraph.txt")
                 if (outputFile.exists()) {
                     outputFile.delete()
                 }
@@ -52,12 +55,13 @@ class DependencyGatherer {
                         });
                 sortedConfigurations.addAll(project.configurations);
                 for (Configuration configuration : sortedConfigurations) {
-                    renderer.startConfiguration(configuration);
-                    renderer.render(configuration);
-                    renderer.completeConfiguration(configuration);
+                    if(configurationFilter.shouldInclude(configuration.name)) {
+                        renderer.startConfiguration(configuration);
+                        renderer.render(configuration);
+                        renderer.completeConfiguration(configuration);
+                    }
                 }
-
-                renderer.completeProject()
+                renderer.completeProject(project)
                 renderer.complete()
                 println "completed ${outputFile.canonicalPath}"
             }
