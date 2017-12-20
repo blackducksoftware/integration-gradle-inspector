@@ -1,10 +1,9 @@
 buildscript {
     repositories {
-        mavenLocal()
         mavenCentral()
     }
     dependencies {
-        classpath "com.blackducksoftware.integration:common-gradle-plugin:0.0.4"
+        classpath "com.blackducksoftware.integration:common-gradle-plugin:0.0.6"
     }
 }
 
@@ -16,10 +15,6 @@ apply plugin: 'com.blackducksoftware.integration.common'
 
 version = '0.4.0-SNAPSHOT'
 
-def versionFile = new File("${projectDir}/src/main/resources/version.txt")
-versionFile.delete()
-versionFile << version
-
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
@@ -28,19 +23,7 @@ repositories {
     mavenCentral()
 }
 
-task printVersion {
-    doLast{
-       println project.version
-    }
-}
-
 dependencies {
     compile 'com.blackducksoftware.integration:integration-common:7.1.0'
     compile gradleApi()
-}
-
-jar {
-    manifest {
-        attributes 'Main-Class': 'com.blackducksoftware.integration.gradle.Version'
-    }
 }
