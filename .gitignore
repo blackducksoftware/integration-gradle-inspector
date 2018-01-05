@@ -1,6 +1,12 @@
-.project
-.classpath
+# operating system
+.DS_Store
+
+# ide
 .settings/
-.gradle/
+.classpath
+.project
 bin/
+
+# build tool
+.gradle/
 build/
