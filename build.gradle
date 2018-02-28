@@ -9,6 +9,7 @@ buildscript {
 
 plugins {
     id 'groovy'
+    id 'org.sonarqube' version '2.6.1'
 }
 
 version = '0.4.1-SNAPSHOT'
@@ -18,4 +19,12 @@ apply plugin: 'com.blackducksoftware.integration.library'
 dependencies {
     compile 'com.blackducksoftware.integration:integration-common:8.2.0'
     compile gradleApi()
+}
+
+sonarqube {
+    properties {
+        property 'sonar.projectName', 'Integrations - Gradle Inspector'
+        property 'sonar.projectKey', 'com.blackducksoftware:int:gradle-inspector'
+        property 'sonar.verbose', false
+   }
 }
