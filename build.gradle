@@ -11,11 +11,11 @@ plugins {
     id 'groovy'
 }
 
-version = '0.4.1-SNAPSHOT'
+version = '0.5.0'
 
 apply plugin: 'com.blackducksoftware.integration.library'
 
 dependencies {
-    compile 'com.blackducksoftware.integration:integration-common:8.2.0'
+    compile 'com.blackducksoftware.integration:integration-common:10.0.0'
     compile gradleApi()
 }
