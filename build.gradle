@@ -16,6 +16,6 @@ version = '0.6.1-SNAPSHOT'
 apply plugin: 'com.blackducksoftware.integration.library'
 
 dependencies {
-    compile 'com.blackducksoftware.integration:integration-common:11.0.0'
+    compile 'com.blackducksoftware.integration:integration-common:11.1.1'
     compile gradleApi()
 }
