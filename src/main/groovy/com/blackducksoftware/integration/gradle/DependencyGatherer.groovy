@@ -45,12 +45,16 @@ class DependencyGatherer {
         ExcludedIncludedFilter configurationFilter = new ExcludedIncludedFilter(excludedConfigurationNames, includedConfigurationNames)
 
         File rootOutputFile = new File(outputDirectory, 'rootProjectMetadata.txt');
+        String rootProjectGroup = rootProject.group.toString()
+        String rootProjectName = rootProject.name.toString()
+        String rootProjectVersionName = rootProject.version.toString()
+
         def rootProjectMetadataPieces = []
         rootProjectMetadataPieces.add('DETECT META DATA START')
         rootProjectMetadataPieces.add("rootProjectPath:${rootProject.getProjectDir().getCanonicalPath()}")
-        rootProjectMetadataPieces.add("rootProjectGroup:${rootProject.group.toString()}")
-        rootProjectMetadataPieces.add("rootProjectName:${rootProject.name.toString()}")
-        rootProjectMetadataPieces.add("rootProjectVersion:${rootProject.version.toString()}")
+        rootProjectMetadataPieces.add("rootProjectGroup:${rootProjectGroup}")
+        rootProjectMetadataPieces.add("rootProjectName:${rootProjectName}")
+        rootProjectMetadataPieces.add("rootProjectVersion:${rootProjectVersionName}")
         rootProjectMetadataPieces.add('DETECT META DATA END')
         rootOutputFile << rootProjectMetadataPieces.join('\n')
 
@@ -93,6 +97,10 @@ class DependencyGatherer {
                 def metaDataPieces = []
                 metaDataPieces.add('')
                 metaDataPieces.add('DETECT META DATA START')
+                metaDataPieces.add("rootProjectPath:${rootProject.getProjectDir().getCanonicalPath()}")
+                metaDataPieces.add("rootProjectGroup:${rootProjectGroup}")
+                metaDataPieces.add("rootProjectName:${rootProjectName}")
+                metaDataPieces.add("rootProjectVersion:${rootProjectVersionName}")
                 metaDataPieces.add("projectPath:${project.getProjectDir().getCanonicalPath()}")
                 metaDataPieces.add("projectGroup:${group}")
                 metaDataPieces.add("projectName:${name}")
