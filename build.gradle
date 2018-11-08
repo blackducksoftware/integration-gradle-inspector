@@ -1,3 +1,5 @@
+apply from: 'artifactory-properties.gradle'
+
 buildscript {
     repositories {
         jcenter()
