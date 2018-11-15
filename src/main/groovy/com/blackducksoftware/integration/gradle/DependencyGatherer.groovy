@@ -23,14 +23,13 @@
  */
 package com.blackducksoftware.integration.gradle
 
+import com.synopsys.integration.util.ExcludedIncludedFilter
+import com.synopsys.integration.util.IntegrationEscapeUtil
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.diagnostics.internal.dependencies.AsciiDependencyReportRenderer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import com.blackducksoftware.integration.util.ExcludedIncludedFilter
-import com.blackducksoftware.integration.util.IntegrationEscapeUtil
 
 import groovy.transform.TypeChecked
 
