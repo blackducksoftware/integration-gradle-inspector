@@ -18,6 +18,6 @@ apply plugin: 'com.blackducksoftware.integration.library'
 apply from: 'artifactory-properties.gradle'
 
 dependencies {
-    compile 'com.blackducksoftware.integration:integration-common:15.0.0'
+    compile 'com.blackducksoftware.integration:integration-common:18.0.0'
     compile gradleApi()
 }

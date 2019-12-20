@@ -1,8 +1,7 @@
 /*
  * integration-gradle-inspector
  *
- * Copyright (C) 2018 Black Duck Software, Inc.
- * http://www.blackducksoftware.com/
+ * Copyright (c) 2019 Synopsys, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
