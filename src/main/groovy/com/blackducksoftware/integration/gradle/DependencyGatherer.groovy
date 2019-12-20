@@ -23,6 +23,7 @@
 package com.blackducksoftware.integration.gradle
 
 import com.synopsys.integration.util.ExcludedIncludedFilter
+import com.synopsys.integration.util.ExcludedIncludedWildcardFilter
 import com.synopsys.integration.util.IntegrationEscapeUtil
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -39,8 +40,8 @@ class DependencyGatherer {
     IntegrationEscapeUtil integrationEscapeUtil = new IntegrationEscapeUtil()
 
     void createAllDependencyGraphFiles(final Project rootProject, String excludedProjectNames, String includedProjectNames, String excludedConfigurationNames, String includedConfigurationNames, File outputDirectory) {
-        ExcludedIncludedFilter projectFilter = new ExcludedIncludedFilter(excludedProjectNames, includedProjectNames)
-        ExcludedIncludedFilter configurationFilter = new ExcludedIncludedFilter(excludedConfigurationNames, includedConfigurationNames)
+        ExcludedIncludedFilter projectFilter = new ExcludedIncludedWildcardFilter(excludedProjectNames, includedProjectNames)
+        ExcludedIncludedFilter configurationFilter = new ExcludedIncludedWildcardFilter(excludedConfigurationNames, includedConfigurationNames)
 
         File rootOutputFile = new File(outputDirectory, 'rootProjectMetadata.txt');
         String rootProjectGroup = rootProject.group.toString()
