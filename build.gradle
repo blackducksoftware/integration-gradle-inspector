@@ -11,13 +11,13 @@ plugins {
     id 'groovy'
 }
 
-version = '0.7.1-SNAPSHOT'
+version = '0.7.1'
 
 apply plugin: 'com.blackducksoftware.integration.library'
 
 apply from: 'artifactory-properties.gradle'
 
 dependencies {
-    compile 'com.blackducksoftware.integration:integration-common:18.0.1'
+    compile 'com.blackducksoftware.integration:integration-common:18.0.0'
     compile gradleApi()
 }
