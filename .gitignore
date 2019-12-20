@@ -5,6 +5,7 @@
 .settings/
 .classpath
 .project
+.idea/
 bin/
 
 # build tool
