@@ -11,7 +11,7 @@ plugins {
     id 'groovy'
 }
 
-version = '0.7.1'
+version = '0.7.2-SNAPSHOT'
 description = 'Inspects the dependencies for Gradle projects using the init script.'
 
 apply plugin: 'com.blackducksoftware.integration.library'
