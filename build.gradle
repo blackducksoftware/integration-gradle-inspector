@@ -7,7 +7,7 @@ plugins {
     id 'groovy'
 }
 
-version = '0.7.2-SNAPSHOT'
+version = '0.8.0-SNAPSHOT'
 description = 'Inspects the dependencies for Gradle projects using the init script.'
 
 apply plugin: 'com.synopsys.integration.library'
