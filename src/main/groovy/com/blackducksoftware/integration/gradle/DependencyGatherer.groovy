@@ -28,7 +28,6 @@ import com.synopsys.integration.util.IntegrationEscapeUtil
 import groovy.transform.TypeChecked
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.tasks.diagnostics.internal.ProjectDetails
 import org.gradle.api.tasks.diagnostics.internal.dependencies.AsciiDependencyReportRenderer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -62,7 +61,6 @@ class DependencyGatherer {
                 String group = project.group.toString()
                 String name = project.name.toString()
                 String version = project.version.toString()
-                ProjectDetails projectDetails = ProjectDetails.of(project)
 
                 String nameForFile = integrationEscapeUtil.escapeForUri(name)
                 File outputFile = new File(outputDirectory, "${nameForFile}_dependencyGraph.txt")
@@ -74,7 +72,7 @@ class DependencyGatherer {
                 logger.info("starting ${outputFile.canonicalPath}")
                 AsciiDependencyReportRenderer renderer = new AsciiDependencyReportRenderer()
                 renderer.setOutputFile(outputFile)
-                renderer.startProject(projectDetails)
+                renderer.startProject(project)
 
                 SortedSet<Configuration> sortedConfigurations = new TreeSet<Configuration>(new Comparator<Configuration>() {
                     public int compare(Configuration conf1, Configuration conf2) {
@@ -89,7 +87,7 @@ class DependencyGatherer {
                         renderer.completeConfiguration(configuration);
                     }
                 }
-                renderer.completeProject(projectDetails)
+                renderer.completeProject(project)
                 renderer.complete()
 
                 logger.info("adding meta data to ${outputFile.canonicalPath}")
