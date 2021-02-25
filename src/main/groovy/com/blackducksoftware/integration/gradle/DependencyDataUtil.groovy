@@ -28,7 +28,7 @@ import com.synopsys.integration.util.IntegrationEscapeUtil
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 
-class DependencyGathererUtil {
+class DependencyDataUtil {
     IntegrationEscapeUtil integrationEscapeUtil = new IntegrationEscapeUtil()
 
     void generateRootProjectMetaData(Project project, String outputDirectoryPath) {
@@ -36,6 +36,9 @@ class DependencyGathererUtil {
         outputDirectory.mkdirs()
 
         Project rootProject = project.gradle.rootProject;
+        /* if the current project is the root project then generate the file containing
+           the meta data for the root project otherwise ignore.
+         */
         if (project.name.equals(rootProject.name)) {
             File rootOutputFile = new File(outputDirectory, 'rootProjectMetadata.txt');
             String rootProjectGroup = rootProject.group.toString()
@@ -72,6 +75,7 @@ class DependencyGathererUtil {
     Optional<File> getProjectOutputFile(Project project, String outputDirectoryPath, String excludedProjectNames, String includedProjectNames) {
         Optional<File> projectOutputFile = Optional.empty()
         ExcludedIncludedFilter projectFilter = new ExcludedIncludedWildcardFilter(excludedProjectNames, includedProjectNames)
+        // check if the project should be included.  If it should be included then return the file that will contain dependency data
         if (projectFilter.shouldInclude(project.name)) {
             File outputDirectory = createTaskOutputDirectory(outputDirectoryPath)
             String name = project.name.toString()
@@ -92,7 +96,7 @@ class DependencyGathererUtil {
         projectFile
     }
 
-    void createProjectMetadata(Project project, File projectOutputFile) {
+    void appendProjectMetadata(Project project, File projectOutputFile) {
         Project rootProject = project.gradle.rootProject;
         String rootProjectGroup = rootProject.group.toString()
         String rootProjectName = rootProject.name.toString()
@@ -121,6 +125,7 @@ class DependencyGathererUtil {
     private File createTaskOutputDirectory(String outputDirectoryPath) {
         File outputDirectory = new File(outputDirectoryPath)
         outputDirectory.mkdirs()
+
         outputDirectory
     }
 }
