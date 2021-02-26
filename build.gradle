@@ -1,13 +1,16 @@
 buildscript {
     apply from: 'https://raw.githubusercontent.com/blackducksoftware/integration-resources/master/gradle_common/buildscript-repositories.gradle', to: buildscript
-    apply from: 'https://raw.githubusercontent.com/blackducksoftware/integration-resources/master/gradle_common/buildscript-dependencies.gradle', to: buildscript
+    ////////// START BUILDSCRIPT DEPENDENCY //////////
+dependencies { classpath "com.synopsys.integration:common-gradle-plugin:1.8.1" }
+
+////////// END BUILDSCRIPT DEPENDENCY //////////
 }
 
 plugins {
     id 'groovy'
 }
 
-version = '1.0.0-SNAPSHOT'
+version = '1.0.0'
 description = 'Inspects the dependencies for Gradle projects using the init script.'
 
 apply plugin: 'com.synopsys.integration.library'
