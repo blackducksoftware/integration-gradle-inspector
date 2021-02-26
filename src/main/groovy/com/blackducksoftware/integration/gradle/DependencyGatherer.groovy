@@ -1,7 +1,7 @@
 /*
  * integration-gradle-inspector
  *
- * Copyright (c) 2020 Synopsys, Inc.
+ * Copyright (c) 2021 Synopsys, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
@@ -25,13 +25,12 @@ package com.blackducksoftware.integration.gradle
 import com.synopsys.integration.util.ExcludedIncludedFilter
 import com.synopsys.integration.util.ExcludedIncludedWildcardFilter
 import com.synopsys.integration.util.IntegrationEscapeUtil
+import groovy.transform.TypeChecked
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.diagnostics.internal.dependencies.AsciiDependencyReportRenderer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import groovy.transform.TypeChecked
 
 @TypeChecked
 class DependencyGatherer {
@@ -70,17 +69,16 @@ class DependencyGatherer {
                 }
 
                 outputFile.createNewFile()
-
                 logger.info("starting ${outputFile.canonicalPath}")
                 AsciiDependencyReportRenderer renderer = new AsciiDependencyReportRenderer()
                 renderer.setOutputFile(outputFile)
                 renderer.startProject(project)
 
                 SortedSet<Configuration> sortedConfigurations = new TreeSet<Configuration>(new Comparator<Configuration>() {
-                            public int compare(Configuration conf1, Configuration conf2) {
-                                return conf1.getName().compareTo(conf2.getName());
-                            }
-                        });
+                    public int compare(Configuration conf1, Configuration conf2) {
+                        return conf1.getName().compareTo(conf2.getName());
+                    }
+                });
                 sortedConfigurations.addAll(project.configurations);
                 for (Configuration configuration : sortedConfigurations) {
                     if (configurationFilter.shouldInclude(configuration.name)) {
