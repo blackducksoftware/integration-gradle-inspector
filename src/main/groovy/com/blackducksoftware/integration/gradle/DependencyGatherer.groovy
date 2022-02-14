@@ -1,7 +1,7 @@
 /*
  * integration-gradle-inspector
  *
- * Copyright (c) 2021 Synopsys, Inc.
+ * Copyright (c) 2022 Synopsys, Inc.
  *
  * Use subject to the terms and conditions of the Synopsys End User Software License and Maintenance Agreement. All rights reserved worldwide.
  */
@@ -24,8 +24,8 @@ class DependencyGatherer {
     IntegrationEscapeUtil integrationEscapeUtil = new IntegrationEscapeUtil()
 
     void createAllDependencyGraphFiles(final Project rootProject, String excludedProjectNames, String includedProjectNames, String excludedConfigurationNames, String includedConfigurationNames, File outputDirectory) {
-        ExcludedIncludedFilter projectFilter = new ExcludedIncludedWildcardFilter(excludedProjectNames, includedProjectNames)
-        ExcludedIncludedFilter configurationFilter = new ExcludedIncludedWildcardFilter(excludedConfigurationNames, includedConfigurationNames)
+        ExcludedIncludedFilter projectFilter = ExcludedIncludedWildcardFilter.fromCommaSeparatedStrings(excludedProjectNames, includedProjectNames)
+        ExcludedIncludedFilter configurationFilter = ExcludedIncludedWildcardFilter.fromCommaSeparatedStrings(excludedConfigurationNames, includedConfigurationNames)
 
         File rootOutputFile = new File(outputDirectory, 'rootProjectMetadata.txt');
         String rootProjectGroup = rootProject.group.toString()
@@ -47,7 +47,7 @@ class DependencyGatherer {
                 String name = project.name.toString()
                 String version = project.version.toString()
 
-                String nameForFile = integrationEscapeUtil.escapeForUri(name)
+                String nameForFile = integrationEscapeUtil.replaceWithUnderscore(name)
                 File outputFile = new File(outputDirectory, "${nameForFile}_dependencyGraph.txt")
                 if (outputFile.exists()) {
                     outputFile.delete()

@@ -15,6 +15,6 @@ apply plugin: 'com.synopsys.integration.library'
 apply from: 'artifactory-properties.gradle'
 
 dependencies {
-    compile 'com.blackducksoftware.integration:integration-common:18.0.1'
+    compile 'com.synopsys.integration:integration-common:25.3.3'
     compile gradleApi()
 }
